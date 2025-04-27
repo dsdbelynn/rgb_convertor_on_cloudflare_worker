@@ -329,7 +329,7 @@ body {
     }
     
     .inputs-group {
-      grid-template-columns: 1fr 1fr 1fr; /* 保持三列布局 */
+      grid-template-columns: 1fr;
     }
   }
   

@@ -112,12 +112,27 @@ blueInput.addEventListener('input', updateFromRGB);
 
 // 绘制色轮
 function drawColorWheel() {
-    const centerX = colorWheel.width / 2;
-    const centerY = colorWheel.height / 2;
+    // 获取设备像素比
+    const dpr = window.devicePixelRatio || 1;
+    
+    // 获取CSS尺寸（实际显示尺寸）
+    const cssWidth = colorWheel.width / dpr;
+    const cssHeight = colorWheel.height / dpr;
+    
+    const centerX = cssWidth / 2;
+    const centerY = cssHeight / 2;
+    
+    // 计算半径，使用CSS尺寸计算
     const radius = Math.min(centerX, centerY);
 
-    // 清空画布
+    // 清空画布（使用完整尺寸）
     colorWheelCtx.clearRect(0, 0, colorWheel.width, colorWheel.height);
+    
+    // 创建圆形裁剪区域确保色轮是圆形的
+    colorWheelCtx.save();
+    colorWheelCtx.beginPath();
+    colorWheelCtx.arc(centerX, centerY, radius, 0, Math.PI * 2, false);
+    colorWheelCtx.clip();
 
     // 绘制色轮
     for (let angle = 0; angle < 360; angle += 1) {
@@ -136,14 +151,18 @@ function drawColorWheel() {
         );
         gradient.addColorStop(0, 'white');
         
-        // 将角度垂直翻转 (沿水平轴对称)
+        // 将角度垂直翻转
         const flippedAngle = (360 - angle) % 360;
         gradient.addColorStop(1, `hsl(${flippedAngle}, 100%, 50%)`);
 
         colorWheelCtx.fillStyle = gradient;
         colorWheelCtx.fill();
     }
+    
+    colorWheelCtx.restore();
+    
 }
+
 
 // 根据当前色调和饱和度绘制亮度滑块
 function drawValueSlider() {
