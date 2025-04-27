@@ -22,40 +22,62 @@ let updating = false;
 // Canvas尺寸调整函数
 
 function adjustCanvasDimensions() {
+    // 获取设备像素比
     const dpr = window.devicePixelRatio || 1;
-
-    // 色轮
+    
+    // ---------- 色轮调整 ----------
+    // 获取色轮容器的实际尺寸（CSS像素）
     const wheelContainer = colorWheel.parentElement;
-    const wheelSize = Math.min(wheelContainer.clientWidth, wheelContainer.clientHeight);
-
-    colorWheel.width = wheelSize * dpr;
-    colorWheel.height = wheelSize * dpr;
-    colorWheel.style.width = `${wheelSize}px`;
-    colorWheel.style.height = `${wheelSize}px`;
-
-    // 亮度滑块
+    const wheelRect = wheelContainer.getBoundingClientRect();
+    
+    // 使用实际可见尺寸，确保色轮是正方形
+    const visibleWheelSize = Math.min(wheelRect.width, wheelRect.height);
+    
+    // 设置CSS尺寸（外观大小）
+    colorWheel.style.width = `${visibleWheelSize}px`;
+    colorWheel.style.height = `${visibleWheelSize}px`;
+    
+    // 设置实际画布尺寸（考虑设备像素比）
+    colorWheel.width = Math.floor(visibleWheelSize * dpr);
+    colorWheel.height = Math.floor(visibleWheelSize * dpr);
+    
+    // ---------- 亮度滑块调整 ----------
+    // 获取滑块容器实际尺寸
     const sliderContainer = valueSlider.parentElement;
-    const sliderWidth = sliderContainer.clientWidth;
-    const sliderHeight = 30;
-
-    valueSlider.width = sliderWidth * dpr;
-    valueSlider.height = sliderHeight * dpr;
-    valueSlider.style.width = `${sliderWidth}px`;
-    valueSlider.style.height = `${sliderHeight}px`;
-
-    // 重新绘制
+    const sliderRect = sliderContainer.getBoundingClientRect();
+    
+    // 使用实际宽度和固定高度
+    const visibleSliderWidth = sliderRect.width;
+    const visibleSliderHeight = 30; // 固定高度30px
+    
+    // 设置CSS尺寸
+    valueSlider.style.width = `${visibleSliderWidth}px`;
+    valueSlider.style.height = `${visibleSliderHeight}px`;
+    
+    // 设置实际画布尺寸
+    valueSlider.width = Math.floor(visibleSliderWidth * dpr);
+    valueSlider.height = Math.floor(visibleSliderHeight * dpr);
+    
+    // ---------- 应用变换和重绘 ----------
+    // 确保上下文存在
     if (colorWheelCtx && valueSliderCtx) {
-        colorWheelCtx.setTransform(1, 0, 0, 1, 0, 0); // 重置变换
-        colorWheelCtx.scale(dpr, dpr);
+        // 重置两个画布的变换
+        colorWheelCtx.setTransform(1, 0, 0, 1, 0, 0);
         valueSliderCtx.setTransform(1, 0, 0, 1, 0, 0);
+        
+        // 应用设备像素比缩放
+        colorWheelCtx.scale(dpr, dpr);
         valueSliderCtx.scale(dpr, dpr);
-
+        
+        // 重绘元素
         drawColorWheel();
         drawValueSlider();
         updateColor();
+        
+        // 输出信息用于调试
+        console.log(`色轮尺寸: CSS=${visibleWheelSize}x${visibleWheelSize}px, 实际=${colorWheel.width}x${colorWheel.height}px, DPR=${dpr}`);
     }
 }
-
 
 
 
