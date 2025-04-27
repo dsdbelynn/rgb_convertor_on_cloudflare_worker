@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>无限暖暖RGB转换</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff6b9d;
+            --secondary-color: #ff69b4;
+            --accent-color: #00bcd4;
+            --dark-color: #333;
+            --light-color: #f8f9fa;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e6e9f0 100%);
+            color: var(--dark-color);
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ffcce0, #ffb6c1);
+            border-radius: 2px;
+        }
+        
+        .color-inputs {
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            background-color: #f7f8fb;
+            padding: 12px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        
+        .input-group:hover {
+            background-color: #eef0f7;
+            transform: translateY(-2px);
+        }
+        
+        .input-group label {
+            width: 40px;
+            font-weight: 600;
+            font-size: 18px;
+            text-align: center;
+            color: var(--dark-color);
+        }
+        
+        .input-group.r-group label {
+            color: #e53935;
+        }
+        
+        .input-group.g-group label {
+            color: #43a047;
+        }
+        
+        .input-group.b-group label {
+            color: #1e88e5;
+        }
+        
+        .input-group input[type="number"] {
+            width: 70px;
+            margin: 0 20px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+        }
+        
+        .input-group input[type="range"] {
+            flex-grow: 1;
+            height: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Customize sliders for each color */
+        .input-group.r-group input[type="range"] {
+            background: linear-gradient(90deg, #ffcdd2, #e53935);
+        }
+        
+        .input-group.g-group input[type="range"] {
+            background: linear-gradient(90deg, #c8e6c9, #43a047);
+        }
+        
+        .input-group.b-group input[type="range"] {
+            background: linear-gradient(90deg, #bbdefb, #1e88e5);
+        }
+        
+        .hex-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: #f7f8fb;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        
+        .hex-input:hover {
+            background-color: #eef0f7;
+            transform: translateY(-2px);
+        }
+        
+        .hex-input label {
+            margin-right: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--dark-color);
+        }
+        
+        .hex-input input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: var(--transition);
+        }
+        
+        .hex-input input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+        }
+        
+        .color-preview {
+            width: 100%;
+            height: 150px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-preview::before {
+            content: "颜色预览";
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #333;
+        }
+        
+        .color-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .color-value {
+            text-align: center;
+            padding: 10px;
+            background-color: #f7f8fb;
+            border-radius: var(--border-radius);
+            flex: 1;
+            margin: 0 5px;
+            transition: var(--transition);
+        }
+        
+        .color-value:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .value-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .value-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #888;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                padding: 15px 10px;
+            }
+            
+            .input-group label {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .input-group input[type="number"] {
+                width: 100%;
+                margin: 10px 0;
+            }
+            
+            .color-values {
+                flex-direction: column;
+            }
+            
+            .color-value {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>无限暖暖RGB转换</h1>
+        
+        <div class="color-inputs">
+            <div class="input-group r-group">
+                <label for="red">R</label>
+                <input type="number" id="red" min="0" max="255" value="255">
+                <input type="range" id="red-slider" min="0" max="255" value="255">
+            </div>
+            
+            <div class="input-group g-group">
+                <label for="green">G</label>
+                <input type="number" id="green" min="0" max="255" value="255">
+                <input type="range" id="green-slider" min="0" max="255" value="255">
+            </div>
+            
+            <div class="input-group b-group">
+                <label for="blue">B</label>
+                <input type="number" id="blue" min="0" max="255" value="255">
+                <input type="range" id="blue-slider" min="0" max="255" value="255">
+            </div>
+        </div>
+        
+        <div class="hex-input">
+            <label for="hex">十六进制:</label>
+            <input type="text" id="hex" value="FFFFFF" placeholder="输入6位十六进制颜色值">
+        </div>
+        
+        <div class="color-preview" id="preview"></div>
+        
+        <div class="color-values">
+            <div class="color-value">
+                <div class="value-label">RGB值</div>
+                <div class="value-text" id="rgb-value">255, 255, 255</div>
+            </div>
+            <div class="color-value">
+                <div class="value-label">HEX值</div>
+                <div class="value-text" id="hex-value">#FFFFFF</div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>无限暖暖RGB颜色转换工具 © 2025 By Lynn</p>
+    </footer>
+
+    <script>
+        // 获取元素
+        const redInput = document.getElementById('red');
+        const greenInput = document.getElementById('green');
+        const blueInput = document.getElementById('blue');
+        const redSlider = document.getElementById('red-slider');
+        const greenSlider = document.getElementById('green-slider');
+        const blueSlider = document.getElementById('blue-slider');
+        const hexInput = document.getElementById('hex');
+        const preview = document.getElementById('preview');
+        const rgbValue = document.getElementById('rgb-value');
+        const hexValue = document.getElementById('hex-value');
+        
+        // RGB转换为十六进制
+        function rgbToHex(r, g, b) {
+            return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+        
+        // 十六进制转换为RGB
+        function hexToRgb(hex) {
+            // 移除#号(如果存在)
+            hex = hex.replace('#', '');
+            
+            // 解析十六进制字符串
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            return { r, g, b };
+        }
+        
+        // 通过RGB输入更新颜色
+        function updateFromRgb() {
+            const r = parseInt(redInput.value);
+            const g = parseInt(greenInput.value);
+            const b = parseInt(blueInput.value);
+            
+            // 更新十六进制输入
+            hexInput.value = rgbToHex(r, g, b);
+            
+            // 更新颜色预览
+            preview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            
+            // 更新颜色值显示
+            rgbValue.textContent = `${r}, ${g}, ${b}`;
+            hexValue.textContent = `#${rgbToHex(r, g, b)}`;
+            
+            // 更新页面主题色彩
+            document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`);
+        }
+        
+        // 通过十六进制输入更新颜色
+        function updateFromHex() {
+            let hex = hexInput.value;
+            
+            // 验证十六进制输入(必须是6个字符)
+            if (!/^[0-9A-Fa-f]{6}$/.test(hex)) {
+                return;
+            }
+            
+            const { r, g, b } = hexToRgb(hex);
+            
+            // 更新RGB输入
+            redInput.value = r;
+            greenInput.value = g;
+            blueInput.value = b;
+            
+            // 更新滑动条
+            redSlider.value = r;
+            greenSlider.value = g;
+            blueSlider.value = b;
+            
+            // 更新颜色预览
+            preview.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            
+            // 更新颜色值显示
+            rgbValue.textContent = `${r}, ${g}, ${b}`;
+            hexValue.textContent = `#${hex}`;
+            
+            // 更新页面主题色彩
+            document.documentElement.style.setProperty('--accent-color', `rgb(${r}, ${g}, ${b})`);
+        }
+        
+        // RGB数字输入的事件监听器
+        redInput.addEventListener('input', function() {
+            redSlider.value = this.value;
+            updateFromRgb();
+        });
+        
+        greenInput.addEventListener('input', function() {
+            greenSlider.value = this.value;
+            updateFromRgb();
+        });
+        
+        blueInput.addEventListener('input', function() {
+            blueSlider.value = this.value;
+            updateFromRgb();
+        });
+        
+        // RGB滑动条的事件监听器
+        redSlider.addEventListener('input', function() {
+            redInput.value = this.value;
+            updateFromRgb();
+        });
+        
+        greenSlider.addEventListener('input', function() {
+            greenInput.value = this.value;
+            updateFromRgb();
+        });
+        
+        blueSlider.addEventListener('input', function() {
+            blueInput.value = this.value;
+            updateFromRgb();
+        });
+        
+        // 十六进制输入的事件监听器
+        hexInput.addEventListener('input', updateFromHex);
+        
+        // 初始化
+        updateFromRgb();
+    </script>
+</body>
+</html>

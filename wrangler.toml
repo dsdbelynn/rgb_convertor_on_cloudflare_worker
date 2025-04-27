@@ -1,0 +1,6 @@
+name = "rgb-converter"
+main = "src/index.js"
+compatibility_date = "2025-04-27"
+
+[site]
+bucket = "./public"
