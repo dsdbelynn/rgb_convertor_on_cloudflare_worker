@@ -166,9 +166,15 @@ function drawColorWheel() {
 
 // 根据当前色调和饱和度绘制亮度滑块
 function drawValueSlider() {
-    const width = valueSlider.width;
-    const height = valueSlider.height;
-    const gradient = valueSliderCtx.createLinearGradient(0, 0, width, 0); // 横向渐变
+    // 获取CSS尺寸（实际显示尺寸）
+    const cssWidth = valueSlider.clientWidth;
+    const cssHeight = valueSlider.clientHeight;
+    
+    // 清空画布（使用完整尺寸）
+    valueSliderCtx.clearRect(0, 0, valueSlider.width, valueSlider.height);
+    
+    // 创建横向线性渐变（使用CSS尺寸）
+    const gradient = valueSliderCtx.createLinearGradient(0, 0, cssWidth, 0);
     
     const rgbFull = hsvToRgb(hsv.h, hsv.s / 100, 1);
     const hexFull = rgbToHex(rgbFull.r, rgbFull.g, rgbFull.b);
@@ -177,8 +183,9 @@ function drawValueSlider() {
     gradient.addColorStop(1, hexFull);   // 到右侧全色结束
     
     valueSliderCtx.fillStyle = gradient;
-    valueSliderCtx.fillRect(0, 0, width, height);
+    valueSliderCtx.fillRect(0, 0, cssWidth, cssHeight); // 使用CSS尺寸绘制
 }
+
 
 // 开始拖动色轮指示器
 function startColorWheelDrag(e) {
