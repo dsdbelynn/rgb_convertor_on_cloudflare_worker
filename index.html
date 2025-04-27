@@ -24,31 +24,45 @@
             
             <div class="controls">
                 <div class="color-values">
-                    <div class="color-value-group">
-                        <label for="hue">H</label>
-                        <input type="number" id="hue" min="0" max="360" step="1" value="0">
+                    <!-- HSV 分组 -->
+                    <div class="color-model-group">
+                      <h4>HSV</h4>
+                      <div class="inputs-group">
+                        <div class="color-value-group">
+                          <label for="hue">H</label>
+                          <input type="number" id="hue" min="0" max="360" step="1" value="0">
+                        </div>
+                        <div class="color-value-group">
+                          <label for="saturation">S</label>
+                          <input type="number" id="saturation" min="0" max="100" step="1" value="100">
+                        </div>
+                        <div class="color-value-group">
+                          <label for="value">V</label>
+                          <input type="number" id="value" min="0" max="100" step="1" value="100">
+                        </div>
+                      </div>
                     </div>
-                    <div class="color-value-group">
-                        <label for="red">R</label>
-                        <input type="number" id="red" min="0" max="255" step="1" value="255">
+                    
+                    <!-- RGB 分组 -->
+                    <div class="color-model-group">
+                      <h4>RGB</h4>
+                      <div class="inputs-group">
+                        <div class="color-value-group">
+                          <label for="red">R</label>
+                          <input type="number" id="red" min="0" max="255" step="1" value="255">
+                        </div>
+                        <div class="color-value-group">
+                          <label for="green">G</label>
+                          <input type="number" id="green" min="0" max="255" step="1" value="0">
+                        </div>
+                        <div class="color-value-group">
+                          <label for="blue">B</label>
+                          <input type="number" id="blue" min="0" max="255" step="1" value="0">
+                        </div>
+                      </div>
                     </div>
-                    <div class="color-value-group">
-                        <label for="saturation">S</label>
-                        <input type="number" id="saturation" min="0" max="100" step="1" value="100">
-                    </div>
-                    <div class="color-value-group">
-                        <label for="green">G</label>
-                        <input type="number" id="green" min="0" max="255" step="1" value="0">
-                    </div>
-                    <div class="color-value-group">
-                        <label for="value">V</label>
-                        <input type="number" id="value" min="0" max="100" step="1" value="100">
-                    </div>
-                    <div class="color-value-group">
-                        <label for="blue">B</label>
-                        <input type="number" id="blue" min="0" max="255" step="1" value="0">
-                    </div>
-                </div>
+                  </div>
+                  
                 
                 <div class="color-preview" id="colorPreview"></div>
                 

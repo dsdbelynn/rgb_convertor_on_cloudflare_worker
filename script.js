@@ -19,13 +19,38 @@ const hsvInfo = document.getElementById('hsvInfo');
 // 当前 HSV 值
 let hsv = { h: 0, s: 100, v: 100 };
 let updating = false;
+// Canvas尺寸调整函数
 
-// 初始化色轮
+function adjustCanvasDimensions() {
+    // 调整色轮canvas尺寸
+    const wheelContainer = colorWheel.parentElement;
+    const wheelSize = Math.min(wheelContainer.offsetWidth, wheelContainer.offsetHeight);
+    colorWheel.width = wheelSize;
+    colorWheel.height = wheelSize;
+    
+    // 调整亮度滑块canvas尺寸
+    valueSlider.width = valueSlider.parentElement.offsetWidth;
+    
+    // 重新绘制
+    if (colorWheelCtx && valueSliderCtx) {
+        drawColorWheel();
+        drawValueSlider();
+        updateColor();
+    }
+}
+
+// 获取上下文
 const colorWheelCtx = colorWheel.getContext('2d');
-drawColorWheel();
-
-// 初始化亮度滑块
 const valueSliderCtx = valueSlider.getContext('2d');
+
+// 页面加载后调整尺寸
+window.addEventListener('load', adjustCanvasDimensions);
+
+// 页面大小变化时调整尺寸
+window.addEventListener('resize', adjustCanvasDimensions);
+
+
+drawColorWheel();
 drawValueSlider();
 
 // 用初始颜色更新所有显示
@@ -390,34 +415,71 @@ infoBoxes.forEach(box => {
 // 添加触摸支持
 colorWheel.addEventListener('touchstart', function(e) {
     e.preventDefault();
-    startColorWheelTouch(e);
-    
-    // 添加以下代码，防止触摸事件被吞噬
     const handleTouchMove = function(moveEvent) {
         moveEvent.preventDefault();
-        dragColorWheelTouch(moveEvent);
+        
+        // 获取触摸点
+        const touch = moveEvent.touches[0];
+        const rect = colorWheel.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // 计算相对于色轮中心的坐标
+        const x = touch.clientX - rect.left - centerX;
+        const y = touch.clientY - rect.top - centerY;
+        
+        const radius = Math.min(centerX, centerY);
+        const distance = Math.sqrt(x * x + y * y);
+        // 确保即使触摸超出边界，也能正确计算饱和度
+        const saturation = Math.min(distance / radius * 100, 100);
+        
+        let hue = Math.atan2(-y, x) * 180 / Math.PI;
+        if (hue < 0) hue += 360;
+        
+        hsv.h = hue;
+        hsv.s = saturation;
+        
+        updateColor();
     };
     
+    // 使用document级别的事件监听，确保手指移出元素边界时仍能捕获事件
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', function() {
         document.removeEventListener('touchmove', handleTouchMove);
-    });
+    }, { once: true });
+    
+    // 处理初始触摸
+    handleTouchMove(e);
 }, { passive: false });
 
 valueSlider.addEventListener('touchstart', function(e) {
     e.preventDefault();
-    startValueSliderTouch(e);
-    
-    // 添加以下代码，防止触摸事件被吞噬
     const handleTouchMove = function(moveEvent) {
         moveEvent.preventDefault();
-        dragValueSliderTouch(moveEvent);
+        
+        // 获取触摸点
+        const touch = moveEvent.touches[0];
+        const rect = valueSlider.getBoundingClientRect();
+        
+        // 计算触摸位置（相对于滑块左边缘）
+        let x = touch.clientX - rect.left;
+        const width = rect.width;
+        
+        // 确保值在0-100范围内，即使触摸超出滑块边界
+        const value = Math.max(0, Math.min(100, (x / width) * 100));
+        hsv.v = value;
+        
+        updateColor();
     };
     
+    // 使用document级别的事件监听
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', function() {
         document.removeEventListener('touchmove', handleTouchMove);
-    });
+    }, { once: true });
+    
+    // 处理初始触摸
+    handleTouchMove(e);
 }, { passive: false });
 
 function startColorWheelTouch(e) {
