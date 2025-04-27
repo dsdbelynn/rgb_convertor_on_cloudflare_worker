@@ -289,19 +289,18 @@ function updateColor(updateHexInput = false) {
     
     // 更新色轮指示器位置
     const wheelRect = colorWheel.getBoundingClientRect();
-    const radius = colorWheel.width / 2;
-    const satRadius = (hsv.s / 100) * radius;
+    const centerX = colorWheel.width / 2;
+    const centerY = colorWheel.height / 2;
+    const satRadius = (hsv.s / 100) * centerX;
     const angle = hsv.h * Math.PI / 180;
     
-    // 计算相对于canvas元素的位置而非直接使用canvas宽度
-    const thumbX = radius + satRadius * Math.cos(angle);
-    const thumbY = radius - satRadius * Math.sin(angle);
+    const thumbX = centerX + satRadius * Math.cos(angle);
+    const thumbY = centerY - satRadius * Math.sin(angle);
     
     colorWheelThumb.style.left = `${thumbX}px`;
     colorWheelThumb.style.top = `${thumbY}px`;
-
+    
     // 更新亮度滑块指示器位置
-    const sliderRect = valueSlider.getBoundingClientRect();
     const valuePos = (hsv.v / 100) * valueSlider.width;
     valueSliderThumb.style.left = `${valuePos}px`;
     
@@ -453,22 +452,26 @@ infoBoxes.forEach(box => {
 // 添加触摸支持
 colorWheel.addEventListener('touchstart', function(e) {
     e.preventDefault();
-    const handleTouchMove = function(moveEvent) {
-        moveEvent.preventDefault();
-        
-        // 获取触摸点
-        const touch = moveEvent.touches[0];
+    
+    function handleTouch(touchEvent) {
+        touchEvent.preventDefault();
+        const touch = touchEvent.touches[0];
         const rect = colorWheel.getBoundingClientRect();
+        
+        // 计算实际canvas尺寸与显示尺寸的比例
+        const scaleX = colorWheel.width / rect.width;
+        const scaleY = colorWheel.height / rect.height;
+        
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
         
-        // 计算相对于色轮中心的坐标
-        const x = touch.clientX - rect.left - centerX;
-        const y = touch.clientY - rect.top - centerY;
+        // 计算触摸位置相对于中心的坐标
+        const x = (touch.clientX - rect.left - centerX);
+        const y = (touch.clientY - rect.top - centerY);
         
+        // 其余计算保持不变...
         const radius = Math.min(centerX, centerY);
-        const distance = Math.sqrt(x * x + y * y);
-        // 确保即使触摸超出边界，也能正确计算饱和度
+        const distance = Math.sqrt(x*x + y*y);
         const saturation = Math.min(distance / radius * 100, 100);
         
         let hue = Math.atan2(-y, x) * 180 / Math.PI;
@@ -478,17 +481,16 @@ colorWheel.addEventListener('touchstart', function(e) {
         hsv.s = saturation;
         
         updateColor();
-    };
+    }
     
-    // 使用document级别的事件监听，确保手指移出元素边界时仍能捕获事件
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchmove', handleTouch, {passive: false});
     document.addEventListener('touchend', function() {
-        document.removeEventListener('touchmove', handleTouchMove);
-    }, { once: true });
+        document.removeEventListener('touchmove', handleTouch);
+    }, {once: true});
     
-    // 处理初始触摸
-    handleTouchMove(e);
-}, { passive: false });
+    handleTouch(e);
+}, {passive: false});
+
 
 valueSlider.addEventListener('touchstart', function(e) {
     e.preventDefault();

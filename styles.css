@@ -43,6 +43,19 @@ body {
     position: relative;
     width: 256px;
     height: 256px;
+    transform: translateZ(0); /* 强制硬件加速 */
+}
+
+.color-wheel-thumb {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 2px solid #ff69b4;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .color-wheel-container {
@@ -64,17 +77,6 @@ body {
     box-shadow: 0 0 10px rgba(255, 105, 180, 0.1);
 }
 
-.color-wheel-thumb {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background-color: white;
-    border: 2px solid #ff69b4;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
 
 .value-slider.horizontal {
     width: 256px;
