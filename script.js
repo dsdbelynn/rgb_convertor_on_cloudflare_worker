@@ -75,6 +75,7 @@ function adjustCanvasDimensions() {
 }
 
 
+
 // 获取上下文
 const colorWheelCtx = colorWheel.getContext('2d');
 const valueSliderCtx = valueSlider.getContext('2d');
