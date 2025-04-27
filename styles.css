@@ -1,0 +1,397 @@
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #fef6f9;
+    padding: 20px;
+}
+
+.page-title {
+    text-align: center;
+    color: #ff69b4;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    text-shadow: 1px 1px 3px rgba(255, 105, 180, 0.3);
+    font-weight: bold;
+}
+
+.color-picker-container {
+    display: flex;
+    background-color: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+    max-width: 600px;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+}
+
+.color-picker-content {
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+    align-items: stretch; /* 确保子元素高度拉伸一致 */
+    justify-content: space-between; /* 均匀分布空间 */
+}
+
+.color-wheel {
+    position: relative;
+    width: 256px;
+    height: 256px;
+}
+
+.color-wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+    width: 280px;
+    min-width: 280px;
+    box-sizing: border-box;
+    /* 增加这部分 - 添加最小高度并调整布局 */
+    justify-content: space-between; /* 自动分配空间 */
+    height: 310px; /* 设置固定高度，使有足够空间 */
+}
+
+.color-wheel-canvas {
+    border-radius: 50%;
+    border: 2px solid #ffc0cb;
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.1);
+}
+
+.color-wheel-thumb {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: white;
+    border: 2px solid #ff69b4;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.value-slider.horizontal {
+    width: 256px;
+    height: 30px;
+    position: relative;
+    margin-top: 0; /* 移除顶部边距 */
+    margin-right: 0;
+}
+
+.value-slider.horizontal .value-slider-canvas {
+    border: 2px solid #ffc0cb;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.1);
+    width: 100%;
+    height: 100%;
+}
+
+.value-slider.horizontal .value-slider-thumb {
+    position: absolute;
+    height: 34px;
+    width: 5px;
+    background-color: transparent;
+    border: 2px solid white;
+    box-sizing: border-box;
+    top: -2px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* 保持 */
+    flex: 1;
+    width: calc(100% - 300px);
+    min-width: 280px;
+    overflow: hidden;
+    padding: 10px 15px; /* 减少内边距 */
+    background-color: #fffbfd;
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(255, 192, 203, 0.3);
+    height: 310px; /* 保持和色轮容器一样的高度 */
+    box-sizing: border-box;
+}
+
+.color-values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px; /* 减小间距 */
+    margin-bottom: 15px; /* 减少底部边距 */
+    width: 100%;
+}
+
+.color-value-group {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 5px 8px; /* 减小内边距 */
+    border-radius: 6px;
+    border: 1px solid #ffd0e0;
+    transition: all 0.2s ease;
+}
+
+.color-value-group:hover {
+    border-color: #ff69b4; /* 悬停时边框颜色变化 */
+    transform: translateY(-2px); /* 悬停时轻微上浮 */
+    box-shadow: 0 3px 6px rgba(255, 105, 180, 0.15); /* 悬停时添加阴影 */
+}
+
+.color-value-group label {
+    width: 25px; /* 增加宽度 */
+    font-weight: bold;
+    margin-right: 10px; /* 增加右边距 */
+    color: #ff69b4;
+    font-size: 16px; /* 增加字体大小 */
+}
+
+.color-value-group input {
+    flex: 1;
+    width: 100%;
+    max-width: none; /* 移除最大宽度限制 */
+    padding: 8px; /* 增加内边距 */
+    font-size: 15px; /* 增加字体大小 */
+    border: 1px solid #ffc0cb;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.color-value-group input:focus {
+    border-color: #ff69b4;
+    box-shadow: 0 0 5px rgba(255, 105, 180, 0.3);
+}
+
+.color-preview {
+    width: 100%;
+    height: 60px; /* 减小高度 */
+    border: 2px solid #ffc0cb;
+    border-radius: 10px;
+    margin-bottom: 15px; /* 减少底部边距 */
+    box-shadow: 0 0 10px rgba(255, 105, 180, 0.1);
+}
+
+
+.hex-value {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0; /* 移除底部边距 */
+    width: 100%;
+    background-color: #fff;
+    padding: 8px 10px; /* 减少内边距 */
+    border-radius: 6px;
+    border: 1px solid #ffd0e0;
+}
+
+.import-button {
+    height: 34px;
+    padding: 0 12px;
+    margin-left: 10px;
+    background-color: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.import-button:hover {
+    background-color: #ff5ba7;
+}
+
+.color-info {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.info-box {
+    flex: 1;
+    padding: 12px 15px;
+    background-color: #fff;
+    border: 1px solid #ffc0cb;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.info-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+    background-color: #fff9fb;
+}
+
+.info-box:active {
+    transform: translateY(-1px);
+}
+
+.info-title {
+    font-size: 14px;
+    color: #ff69b4;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 15px;
+    color: #333;
+    font-weight: 600;
+}
+
+.copy-tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 105, 180, 0.9);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 500;
+    font-size: 14px;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.info-box.copied .copy-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hex-value label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #ff69b4;
+}
+
+.hex-value input {
+    flex-grow: 1;
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ffc0cb;
+    border-radius: 5px;
+    outline: none;
+    min-width: 0;
+}
+
+.hex-value input:focus {
+    border-color: #ff69b4;
+    box-shadow: 0 0 5px rgba(255, 105, 180, 0.3);
+}
+/* 响应式布局调整 */
+@media (max-width: 768px) {
+    .color-picker-container {
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    /* 改为垂直布局 */
+    .color-picker-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    /* 调整色轮容器 */
+    .color-wheel-container {
+        margin-right: 0;
+        margin-bottom: 20px;
+        width: 100%;
+        max-width: 280px;
+        height: auto; /* 移除固定高度 */
+    }
+    
+    /* 调整控制区域 */
+    .controls {
+        width: 100%;
+        max-width: 100%;
+        height: auto; /* 移除固定高度 */
+        margin-bottom: 15px;
+    }
+    
+    /* 调整颜色信息框 */
+    .color-info {
+        flex-direction: column;
+    }
+    
+    .info-box {
+        margin-bottom: 8px;
+    }
+
+    /* 调整色轮和亮度滑块大小 */
+    .color-wheel, .color-wheel-canvas {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1/1; /* 保持正方形 */
+    }
+    
+    .value-slider.horizontal {
+        width: 100%;
+        margin-top: 15px;
+    }
+    
+    .value-slider.horizontal .value-slider-canvas {
+        width: 100%;
+    }
+}
+
+/* 更小屏幕的额外调整 */
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+
+    .color-values {
+        grid-template-columns: 1fr; /* 单列布局 */
+    }
+    
+    .hex-value {
+        flex-wrap: wrap;
+    }
+    
+    .hex-value label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .import-button {
+        margin-top: 8px;
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* 为极小屏幕添加额外调整 */
+@media (max-width: 350px) {
+    body {
+        padding: 10px;
+    }
+    
+    .color-picker-container {
+        padding: 10px;
+    }
+}
