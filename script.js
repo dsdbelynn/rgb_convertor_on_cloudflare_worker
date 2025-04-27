@@ -22,22 +22,58 @@ let updating = false;
 // Canvas尺寸调整函数
 
 function adjustCanvasDimensions() {
+    // 获取设备像素比
+    const dpr = window.devicePixelRatio || 1;
+    
     // 调整色轮canvas尺寸
     const wheelContainer = colorWheel.parentElement;
-    const wheelSize = Math.min(wheelContainer.offsetWidth, wheelContainer.offsetHeight);
+    const wheelSize = Math.min(wheelContainer.clientWidth, wheelContainer.clientHeight);
+    
+    // 设置canvas内部尺寸
     colorWheel.width = wheelSize;
     colorWheel.height = wheelSize;
     
-    // 调整亮度滑块canvas尺寸
-    valueSlider.width = valueSlider.parentElement.offsetWidth;
+    // 确保CSS显示尺寸与内部尺寸匹配
+    colorWheel.style.width = `${wheelSize}px`;
+    colorWheel.style.height = `${wheelSize}px`;
     
-    // 重新绘制
+    // 调整亮度滑块canvas尺寸
+    const sliderContainer = valueSlider.parentElement;
+    const sliderWidth = sliderContainer.clientWidth;
+    const sliderHeight = 30; // 固定高度
+    
+    valueSlider.width = sliderWidth;
+    valueSlider.height = sliderHeight;
+    
+    valueSlider.style.width = `${sliderWidth}px`;
+    valueSlider.style.height = `${sliderHeight}px`;
+    
+    // 重新绘制组件
     if (colorWheelCtx && valueSliderCtx) {
         drawColorWheel();
         drawValueSlider();
         updateColor();
+        
+        // 强制更新指示器位置
+        const radius = colorWheel.width / 2;
+        const satRadius = (hsv.s / 100) * radius;
+        const angle = hsv.h * Math.PI / 180;
+        
+        // 计算色轮指示器位置
+        const thumbX = radius + satRadius * Math.cos(angle);
+        const thumbY = radius - satRadius * Math.sin(angle);
+        
+        // 直接设置指示器位置
+        colorWheelThumb.style.left = `${thumbX}px`;
+        colorWheelThumb.style.top = `${thumbY}px`;
+        
+        // 更新亮度滑块指示器位置
+        const valuePos = (hsv.v / 100) * valueSlider.width;
+        valueSliderThumb.style.left = `${valuePos}px`;
+        valueSliderThumb.style.top = '0px'; // 确保垂直位置正确
     }
 }
+
 
 // 获取上下文
 const colorWheelCtx = colorWheel.getContext('2d');
@@ -251,10 +287,12 @@ function updateColor(updateHexInput = false) {
     drawValueSlider();
     
     // 更新色轮指示器位置
+    const wheelRect = colorWheel.getBoundingClientRect();
     const radius = colorWheel.width / 2;
     const satRadius = (hsv.s / 100) * radius;
     const angle = hsv.h * Math.PI / 180;
     
+    // 计算相对于canvas元素的位置而非直接使用canvas宽度
     const thumbX = radius + satRadius * Math.cos(angle);
     const thumbY = radius - satRadius * Math.sin(angle);
     
@@ -262,10 +300,9 @@ function updateColor(updateHexInput = false) {
     colorWheelThumb.style.top = `${thumbY}px`;
 
     // 更新亮度滑块指示器位置
-        const valuePos = (hsv.v / 100) * valueSlider.width;
-        valueSliderThumb.style.left = `${valuePos}px`;
-        valueSliderThumb.style.top = '0px'; // 重置top位置
-
+    const sliderRect = valueSlider.getBoundingClientRect();
+    const valuePos = (hsv.v / 100) * valueSlider.width;
+    valueSliderThumb.style.left = `${valuePos}px`;
     
     updating = false;
 }
