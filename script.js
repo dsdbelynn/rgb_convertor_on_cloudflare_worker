@@ -389,13 +389,35 @@ infoBoxes.forEach(box => {
 });
 // 添加触摸支持
 colorWheel.addEventListener('touchstart', function(e) {
-    e.preventDefault(); // 防止滚动
+    e.preventDefault();
     startColorWheelTouch(e);
+    
+    // 添加以下代码，防止触摸事件被吞噬
+    const handleTouchMove = function(moveEvent) {
+        moveEvent.preventDefault();
+        dragColorWheelTouch(moveEvent);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', function() {
+        document.removeEventListener('touchmove', handleTouchMove);
+    });
 }, { passive: false });
 
 valueSlider.addEventListener('touchstart', function(e) {
-    e.preventDefault(); // 防止滚动
+    e.preventDefault();
     startValueSliderTouch(e);
+    
+    // 添加以下代码，防止触摸事件被吞噬
+    const handleTouchMove = function(moveEvent) {
+        moveEvent.preventDefault();
+        dragValueSliderTouch(moveEvent);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', function() {
+        document.removeEventListener('touchmove', handleTouchMove);
+    });
 }, { passive: false });
 
 function startColorWheelTouch(e) {
@@ -405,17 +427,20 @@ function startColorWheelTouch(e) {
 }
 
 function dragColorWheelTouch(e) {
+    e.preventDefault(); // 阻止默认行为
     if (!e.touches) return;
     const touch = e.touches[0];
     const rect = colorWheel.getBoundingClientRect();
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
     
+    // 计算相对于色轮中心的坐标
     const x = touch.clientX - rect.left - centerX;
     const y = touch.clientY - rect.top - centerY;
     
     const radius = Math.min(centerX, centerY);
     const distance = Math.sqrt(x * x + y * y);
+    // 即使触摸移出边界，也能获取正确的饱和度值
     const saturation = Math.min(distance / radius * 100, 100);
     
     let hue = Math.atan2(-y, x) * 180 / Math.PI;
@@ -434,12 +459,17 @@ function startValueSliderTouch(e) {
 }
 
 function dragValueSliderTouch(e) {
+    e.preventDefault(); // 阻止默认行为
     if (!e.touches) return;
     const touch = e.touches[0];
     const rect = valueSlider.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
+    
+    // 计算触摸点相对于滑块的X坐标，不受滑块宽度的限制
+    let x = touch.clientX - rect.left;
+    // 获取滑块宽度
     const width = rect.width;
     
+    // 确保值在0-100范围内，即使触摸超出滑块边界
     const value = Math.max(0, Math.min(100, (x / width) * 100));
     hsv.v = value;
     
